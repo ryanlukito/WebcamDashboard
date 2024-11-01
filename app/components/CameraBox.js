@@ -12,7 +12,7 @@ const CameraBox = () => {
         />
     </div>
     <div className='w-[13.854vw] h-[13.385vw] bg-white rounded-[0.521vw]'>
-        <h1 className='font-bold text-center '>Counter</h1>
+        <h1 className='font-bold text-center text-[1.5vw]'>Counter</h1>
     </div>
 </div>
 

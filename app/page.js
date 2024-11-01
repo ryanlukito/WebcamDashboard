@@ -5,7 +5,7 @@ import CameraBox from "./components/CameraBox";
 
 export default function Home() {
   return (
-    <div className="w-screen h-screen aspect-[1920/1080] flex flex-row bg-[#1d1f32]">
+    <div className="w-screen min-h-screen aspect-[1920/1080] flex flex-row bg-[#1d1f32]">
       <NavBar></NavBar>
       <div className="w-[24.219vw] h-full flex flex-col items-center border-r border-white">
         <div className="w-[21.219vw]">
