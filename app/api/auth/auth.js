@@ -5,7 +5,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase Client Initialization
-const SUPABASE_URL = "postgresql://postgres.ugwdbqsmhqdakqnjeszn:PeeplyticsAI@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres/Account"
+const SUPABASE_URL = "postgresql://postgres.ugwdbqsmhqdakqnjeszn:PeeplyticsAI@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVnd2RicXNtaHFkYWtxbmplc3puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA1NDIwMTQsImV4cCI6MjA0NjExODAxNH0.86YSn_o8GKskNgAUq6abMpVaJsOubOKL0z0OKP7o-GE"
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 

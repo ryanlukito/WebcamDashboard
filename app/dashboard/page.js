@@ -1,7 +1,7 @@
 import Image from "next/image";
-import NavBar from "./components/NavBar";
-import BoxWatch from "./components/BoxWatch";
-import CameraBox from "./components/CameraBox";
+import NavBar from "../components/NavBar";
+import BoxWatch from "../components/BoxWatch";
+import CameraBox from "../components/CameraBox";
 
 export default function Home() {
   return (
