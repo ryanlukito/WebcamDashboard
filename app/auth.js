@@ -1,44 +1,44 @@
-import { getServerSession } from "next-auth";
-import { prisma } from "./db";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import GoogleProvider from "next-auth/providers/google";
+// 1. Import Supabase client library (npm install @supabase/supabase-js) if you're using Node.js or include in HTML script tag.
+import { createClient } from '@supabase/supabase-js';
 
-export const authOptions = {
-  session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    jwt: async ({ token }) => {
-      const dbUser = await prisma.user.findFirst({
-        where: {
-          email: token.email,
-        },
-      });
-      if (dbUser) {
-        token.id = dbUser.id;
-        token.credits = dbUser.credits;
-      }
-      return token;
-    },
-    session: ({ session, token }) => {
-      if (token) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.image = token.picture;
-        session.user.credits = token.credits;
-      }
-      return session;
-    },
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-};
+// 2. Initialize Supabase client with URL and API key
+const SUPABASE_URL = env(DATABASE_URL);
+const SUPABASE_KEY = env(DATABASE_API_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-export const getAuthSession = () => getServerSession(authOptions);
+// 3. Login Function
+async function login(email, password) {
+  try {
+    // Fetch the user account based on the email provided
+    let { data, error } = await supabase
+      .from('Account')
+      .select('id, name, password')
+      .eq('email', email)
+      .single(); // Fetches only a single row
+    
+    if (error) {
+      throw new Error('User not found or wrong email');
+    }
+
+    // 4. Check if password matches (ensure your passwords are hashed when storing)
+    // In production, never store plain text passwords; use bcrypt or another secure hashing library
+    if (data.password === password) {
+      console.log('Login successful!');
+      return {
+        success: true,
+        userId: data.id,
+        userName: data.name
+      };
+    } else {
+      throw new Error('Incorrect password');
+    }
+  } catch (error) {
+    console.error('Error logging in:', error.message);
+    return {
+      success: false,
+      message: error.message
+    };
+  }
+}
+
+export default login;
