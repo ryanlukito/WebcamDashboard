@@ -1,6 +1,7 @@
 from flask import Flask, Response, jsonify
 from flask_cors import CORS
 import cv2
+import os
 import numpy as np
 from ultralytics import YOLO
 import supervision as sv
@@ -8,7 +9,7 @@ import supervision as sv
 app = Flask(__name__)
 CORS(app)
 
-model = YOLO(r'D:\Project\best.pt')
+model = YOLO(os.path.join(os.path.dirname(__file__), 'best.pt'))
 
 colors = {
     0: (0, 255, 0),    # Green for '21-30 thn (Angry)'

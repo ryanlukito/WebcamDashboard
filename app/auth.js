@@ -19,9 +19,6 @@ async function login(email, password) {
     if (error) {
       throw new Error('User not found or wrong email');
     }
-
-    // 4. Check if password matches (ensure your passwords are hashed when storing)
-    // In production, never store plain text passwords; use bcrypt or another secure hashing library
     if (data.password === password) {
       console.log('Login successful!');
       return {
