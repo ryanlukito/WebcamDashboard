@@ -11,9 +11,9 @@ export default function Home() {
         <div className="w-[21.219vw]">
           <h1 className="text-[1.563vw] text-white my-[2vw] font-bold">Watching</h1>
         </div>
-        <BoxWatch>1. Ruang Depan</BoxWatch>
-        <BoxWatch>2. Ruang Tamu</BoxWatch>
-        <BoxWatch>3. Ruang Keluarga</BoxWatch>
+        <BoxWatch>1. Camera 1</BoxWatch>
+        <BoxWatch>2. Camera 2</BoxWatch>
+        <BoxWatch>3. Camera 3</BoxWatch>
       </div>
       <div className="w-[57.5vw] h-full flex justify-center my-[1vw]">
         <CameraBox></CameraBox>
