@@ -12,10 +12,24 @@ CORS(app)
 model = YOLO(os.path.join(os.path.dirname(__file__), 'best.pt'))
 
 colors = {
-    0: (0, 255, 0),    # Green for '21-30 thn (Angry)'
-    1: (255, 0, 0),    # Blue for '21-30 thn (Happy)'
-    2: (0, 0, 255)     # Red for '21-30 thn (Neutral)' and more...
+    0: (0, 255, 0),      # Green for '21-30 thn (Angry)'
+    1: (255, 0, 0),      # Blue for '21-30 thn (Happy)'
+    2: (0, 0, 255),      # Red for '21-30 thn (Neutral)'
+    3: (255, 255, 0),    # Yellow for '21-30 thn (Sad)'
+    4: (0, 255, 255),    # Cyan for '31-40 thn (Angry)'
+    5: (255, 0, 255),    # Magenta for '31-40 thn (Happy)'
+    6: (128, 128, 0),    # Olive for '31-40 thn (Neutral)'
+    7: (128, 0, 128),    # Purple for '31-40 thn (Sad)'
+    8: (0, 128, 128),    # Teal for '41-50 thn (Angry)'
+    9: (128, 128, 255),  # Light Blue for '41-50 thn (Happy)'
+    10: (255, 128, 128), # Light Red for '41-50 thn (Neutral)'
+    11: (128, 255, 128), # Light Green for '41-50 thn (Sad)'
+    12: (128, 0, 0),     # Dark Red for '50+ thn (Angry)'
+    13: (0, 128, 0),     # Dark Green for '50+ thn (Happy)'
+    14: (0, 0, 128),     # Dark Blue for '50+ thn (Neutral)'
+    15: (64, 64, 64)     # Gray for '50+ thn (Sad)'
 }
+
 
 class_labels = {
     0: '21-30 thn (Angry)',

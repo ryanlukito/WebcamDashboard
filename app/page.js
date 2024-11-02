@@ -24,8 +24,8 @@ export default function Login() {
 
     return (
         <div className="flex items-center justify-center h-screen bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-80">
-                <h1 className="text-2xl font-bold text-center text-blue-800 mb-6">Peeplytics AI</h1>
+            <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+                <h1 className="text-2xl font-bold text-left text-[#272741] mb-6">Peeplytics AI</h1>
                 <input
                     type="text"
                     placeholder="User Name"
@@ -45,7 +45,7 @@ export default function Login() {
                 </div>
                 <button
                     onClick={handleLogin}
-                    className="w-full py-2 bg-blue-800 text-white rounded-lg font-semibold hover:bg-blue-900 transition-colors"
+                    className="w-full py-2 bg-[#272741] text-white rounded-lg font-semibold hover:bg-[#272741] transition-colors"
                 >
                     Log In
                 </button>
