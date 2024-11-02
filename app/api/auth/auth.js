@@ -5,9 +5,12 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase Client Initialization
-const SUPABASE_URL = "postgresql://postgres.ugwdbqsmhqdakqnjeszn:PeeplyticsAI@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVnd2RicXNtaHFkYWtxbmplc3puIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA1NDIwMTQsImV4cCI6MjA0NjExODAxNH0.86YSn_o8GKskNgAUq6abMpVaJsOubOKL0z0OKP7o-GE"
+const SUPABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_DATABASE_API_KEY
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+console.log("Supabase URL: ", SUPABASE_URL);
+console.log("Supabase Key: ", SUPABASE_KEY);
 
 // Login Function
 async function login(email, password) {

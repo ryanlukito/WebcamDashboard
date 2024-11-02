@@ -15,7 +15,7 @@ export default function Login() {
         // Implementasi logika login
         const response = await login(email, password);
         if (response.success) {
-            setMessage("Welcome, ${response.userName}!");
+            setMessage(`Welcome, ${response.userName}!`);
             router.push('/dashboard'); // Redirect ke halaman utama setelah login
         } else {
             setMessage(response.message);
