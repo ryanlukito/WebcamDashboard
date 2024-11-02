@@ -19,7 +19,7 @@ const NavBar = () => {
                 height={10000}
                 className="w-[6.042vw] h-[6.042vw] object-cover"
             />
-            <h1 className='ml-[0.5vw] mt-[2.5vw]'>CCTV</h1>
+            <h1 className='ml-[0.5vw] mt-[2.5vw]'>Peeplytics</h1>
         </div>
         <div className='w-full h-[14.219vw] flex flex-col justify-between'>
             {source.map((client, index) => (
