@@ -5,7 +5,7 @@ import CameraBox from "./components/CameraBox";
 
 export default function Home() {
   return (
-    <div className="w-screen h-screen aspect-[1920/1080] flex flex-row bg-[#1d1f32]">
+    <div className="w-screen h-screen aspect-[1920/1080] flex flex-row bg-[#1d1f32] overflow-hidden">
       <NavBar></NavBar>
       <div className="w-[24.219vw] h-full flex flex-col items-center border-r border-white">
         <div className="w-[21.219vw]">
@@ -15,7 +15,7 @@ export default function Home() {
         <BoxWatch>2. Camera 2</BoxWatch>
         <BoxWatch>3. Camera 3</BoxWatch>
       </div>
-      <div className="w-[57.5vw] h-full flex justify-center py-[2vw]">
+      <div className="w-[57.5vw] h-full flex justify-center my-[1vw]">
         <CameraBox></CameraBox>
       </div>
     </div>

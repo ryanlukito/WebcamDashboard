@@ -11,7 +11,7 @@ const source = [
 const NavBar = () => {
   return (
     <div className='w-[18.281vw] h-full flex flex-col bg-[#272741] text-white font-bold'> 
-        <div className='mb-[3vw] text-[2.083vw] flex items-center'>
+        <div className='mb-[3vw] flex items-center'>
             <Image
                 src="/image/cctv.png"
                 alt="Ornament Background"
@@ -19,7 +19,7 @@ const NavBar = () => {
                 height={10000}
                 className="w-[6.042vw] h-[6.042vw] object-cover"
             />
-            <h1 className='ml-[0.5vw] mt-[2.5vw]'>Peeplytics</h1>
+            <h1 className='ml-[0.5vw] mt-[2.5vw] text-[1.7vw]'>PeeplyticsAI</h1>
         </div>
         <div className='w-full h-[14.219vw] flex flex-col justify-between'>
             {source.map((client, index) => (
@@ -31,7 +31,7 @@ const NavBar = () => {
                         height={10000}
                         className={`${client.width} ${client.height} object-cover`}
                     />
-                    <h1 className='ml-[1vw]'>{client.text}</h1>
+                    <h1 className='ml-[1vw] text-[1.5vw]'>{client.text}</h1>
                 </Link>
             ))}
         </div>
