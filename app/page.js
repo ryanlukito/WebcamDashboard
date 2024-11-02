@@ -1,23 +1,56 @@
-import Image from "next/image";
-import NavBar from "./components/NavBar";
-import BoxWatch from "./components/BoxWatch";
-import CameraBox from "./components/CameraBox";
+// app/page.js
+'use client';
 
-export default function Home() {
-  return (
-    <div className="w-screen h-screen aspect-[1920/1080] flex flex-row bg-[#1d1f32] overflow-hidden">
-      <NavBar></NavBar>
-      <div className="w-[24.219vw] h-full flex flex-col items-center border-r border-white">
-        <div className="w-[21.219vw]">
-          <h1 className="text-[1.563vw] text-white my-[2vw] font-bold">Watching</h1>
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import login  from "../app/api/auth/auth";
+
+export default function Login() {
+    const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
+
+    const handleLogin = async () => {
+        // Implementasi logika login
+        const response = await login(email, password);
+        if (response.success) {
+            setMessage("Welcome, ${response.userName}!");
+            router.push('/dashboard'); // Redirect ke halaman utama setelah login
+        } else {
+            setMessage(response.message);
+        }
+    };
+
+    return (
+        <div className="flex items-center justify-center h-screen bg-gray-100">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-80">
+                <h1 className="text-2xl font-bold text-center text-blue-800 mb-6">Peeplytics AI</h1>
+                <input
+                    type="text"
+                    placeholder="User Name"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                />
+                <div className="relative mb-4">
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    />
+                    {/* <span className="absolute inset-y-0 right-3 flex items-center text-gray-400 cursor-pointer">👁</span>  */}
+                </div>
+                <button
+                    onClick={handleLogin}
+                    className="w-full py-2 bg-blue-800 text-white rounded-lg font-semibold hover:bg-blue-900 transition-colors"
+                >
+                    Log In
+                </button>
+                {message && <p className="mt-4 text-center text-red-500 text-sm">{message}</p>}
+            </div>
         </div>
-        <BoxWatch>1. Camera 1</BoxWatch>
-        <BoxWatch>2. Camera 2</BoxWatch>
-        <BoxWatch>3. Camera 3</BoxWatch>
-      </div>
-      <div className="w-[57.5vw] h-full flex justify-center my-[1vw]">
-        <CameraBox></CameraBox>
-      </div>
-    </div>
-  );
+    );
 }
