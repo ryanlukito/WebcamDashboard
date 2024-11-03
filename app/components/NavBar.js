@@ -3,27 +3,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const source = [
-    {src: '/image/eye.png', width: 'w-[3.008vw]', height: 'h-[2.082vw]', text: 'WATCHING'},
-    {src: '/image/archive.png', width: 'w-[2.969vw]', height: 'h-[2.969vw]', text: 'ARCHIVE'},
-    {src: '/image/files.png', width: 'w-[2.5vw]', height: 'h-[2.969vw]', text: 'FILES'},
+    {src: '/image/eye.png', width: 'w-6', text: 'Watching'},
+    {src: '/image/archive.png', width: 'w-6', text: 'History'},
 ];
 
 const NavBar = () => {
   return (
-    <div className='w-[18.281vw] h-full flex flex-col bg-[#272741] text-white font-bold'> 
-        <div className='mb-[3vw] flex items-center'>
+    <div className='w-72 h-full flex flex-col bg-[#272741] text-white font-bold'> 
+        <div className='mb-12 flex items-center'>
             <Image
                 src="/image/cctv.png"
                 alt="Ornament Background"
                 width={10000}
                 height={10000}
-                className="w-[6.042vw] h-[6.042vw] object-cover"
+                className="w-16 h-16 object-cover"
             />
-            <h1 className='ml-[0.5vw] mt-[2.5vw] text-[1.7vw]'>PeeplyticsAI</h1>
+            <h1 className='ml-2 mt-8 text-2xl'>PeeplyticsAI</h1>
         </div>
-        <div className='w-full h-[14.219vw] flex flex-col justify-between'>
+        <div className='w-full h-60 flex flex-col'>
             {source.map((client, index) => (
-                <Link className='py-[1vw] px-[1.5vw] flex items-center hover:bg-[#1d1f32] mb-[1vw]' href='/' key={index}>
+                <Link className='py-2 px-6 flex items-center hover:bg-[#1d1f32]' href='/' key={index}>
                     <Image
                         src={client.src}
                         alt="Ornament Background"
@@ -31,7 +30,7 @@ const NavBar = () => {
                         height={10000}
                         className={`${client.width} ${client.height} object-cover`}
                     />
-                    <h1 className='ml-[1vw] text-[1.5vw]'>{client.text}</h1>
+                    <h1 className='ml-4 text-base'>{client.text}</h1>
                 </Link>
             ))}
         </div>

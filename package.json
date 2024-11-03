@@ -11,7 +11,10 @@
   "dependencies": {
     "@prisma/client": "^5.21.1",
     "@supabase/supabase-js": "^2.46.1",
+    "@tensorflow/tfjs": "^3.11.0",
+    "@vladmandic/face-api": "^1.7.14",
     "dotenv": "^16.4.5",
+    "face-api.js": "^0.22.2",
     "inferencejs": "^1.0.15",
     "next": "15.0.2",
     "prisma": "^5.21.1",

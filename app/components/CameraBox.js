@@ -1,160 +1,125 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useMemo } from "react";
-import { InferenceEngine, CVImage } from "inferencejs";
+import React, { useEffect, useRef, useState } from 'react';
+import * as faceapi from 'face-api.js';
 
 function CameraBox() {
-  const inferEngine = useMemo(() => new InferenceEngine(), []);
-  const [modelWorkerId, setModelWorkerId] = useState(null);
-  const [modelLoading, setModelLoading] = useState(false);
-  const [detectedObjects, setDetectedObjects] = useState(new Set());
-  const [knownFaces, setKnownFaces] = useState([]); // Array to store detected faces
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-
-  const colorMap = useMemo(() => ({
-    "21-30 thn -Neutral-": "rgb(255, 99, 132)",
-    "21-30 thn -Happy-": "rgb(255, 0, 0)",
-    "31-40 thn -Neutral-": "rgb(54, 162, 235)",
-    "41-50 thn -Neutral-": "rgb(75, 192, 192)",
-  }), []);
+  const [faceCount, setFaceCount] = useState(0); // Counter for faces detected in current frame
 
   useEffect(() => {
-    if (!modelLoading) {
-      setModelLoading(true);
-      inferEngine
-        .startWorker("peeplyticsai", 1, "rf_xKRg3WO00WPpMotXe2olMgrucC82")
-        .then((id) => setModelWorkerId(id))
-        .catch((error) => {
-          console.error("Error initializing model worker:", error);
-          setModelLoading(false);
-        });
-    }
-  }, [inferEngine, modelLoading]);
-
-  useEffect(() => {
-    if (modelWorkerId) {
-      startWebcam();
-    }
-  }, [modelWorkerId]);
-
-  const startWebcam = () => {
-    const constraints = {
-      audio: false,
-      video: {
-        width: { ideal: 640 },
-        height: { ideal: 480 },
-        facingMode: "environment",
-      },
+    const loadModels = async () => {
+      const MODEL_URL = `${window.location.origin}/models`;
+      await Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+        faceapi.nets.ageGenderNet.loadFromUri(MODEL_URL),
+      ]);
+      startVideo();
     };
 
-    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-      videoRef.current.srcObject = stream;
-      videoRef.current.onloadedmetadata = () => videoRef.current.play();
-      videoRef.current.onplay = () => {
-        const ctx = canvasRef.current.getContext("2d");
+    loadModels();
+  }, []);
 
-        const height = videoRef.current.videoHeight;
-        const width = videoRef.current.videoWidth;
+  const startVideo = () => {
+    navigator.mediaDevices
+      .getUserMedia({ video: {} })
+      .then((stream) => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      })
+      .catch((err) => {
+        console.error("Error accessing webcam:", err);
+        alert("Webcam access was denied. Please allow camera access and refresh the page.");
+      });
+  };
 
-        videoRef.current.width = width;
-        videoRef.current.height = height;
+  useEffect(() => {
+    const handleVideoPlay = () => {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
 
-        canvasRef.current.width = width;
-        canvasRef.current.height = height;
-
-        ctx.scale(1, 1);
-
-        detectFrame();
+      const displaySize = {
+        width: video.videoWidth,
+        height: video.videoHeight,
       };
-    });
-  };
+      faceapi.matchDimensions(canvas, displaySize);
 
-  const isSameFace = (newFace) => {
-    // Thresholds for distance and size similarity
-    const positionThreshold = 50;
-    const sizeThreshold = 0.2;
+      setInterval(async () => {
+        try {
+          const detections = await faceapi
+            .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceExpressions()
+            .withAgeAndGender();
 
-    return knownFaces.some((face) => {
-      const distX = Math.abs(face.bbox.x - newFace.bbox.x);
-      const distY = Math.abs(face.bbox.y - newFace.bbox.y);
-      const sizeDiff = Math.abs(face.bbox.width - newFace.bbox.width) / face.bbox.width;
+          const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-      return distX < positionThreshold && distY < positionThreshold && sizeDiff < sizeThreshold;
-    });
-  };
+          const context = canvas.getContext('2d');
+          context.clearRect(0, 0, canvas.width, canvas.height);
 
-  const detectFrame = () => {
-    if (!modelWorkerId) {
-      setTimeout(detectFrame, 100 / 3);
-      return;
+          // Update the faceCount to the number of faces detected in the current frame
+          setFaceCount(detections.length);
+
+          if (detections.length > 0) {
+            resizedDetections.forEach(detection => {
+              const { age, gender, genderProbability } = detection;
+              const expressions = detection.expressions.asSortedArray();
+              const highestExpression = expressions[0].expression;
+
+              const box = detection.detection.box;
+              const text = `Age: ${Math.round(age)}, Gender: ${gender} (${Math.round(genderProbability * 100)}%), Expression: ${highestExpression}`;
+
+              // Draw bounding box
+              context.strokeStyle = "red";
+              context.lineWidth = 2;
+              context.strokeRect(box.x, box.y, box.width, box.height);
+
+              // Draw text label above the box
+              context.font = "16px Arial";
+              context.fillStyle = "red";
+              context.fillText(text, box.x, box.y - 10);
+            });
+          }
+        } catch (error) {
+          console.error("Error during face detection:", error);
+        }
+      }, 100);
+    };
+
+    if (videoRef.current) {
+      videoRef.current.addEventListener('play', handleVideoPlay);
     }
 
-    const img = new CVImage(videoRef.current);
-    inferEngine.infer(modelWorkerId, img).then((predictions) => {
-      const ctx = canvasRef.current.getContext("2d");
-      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-      predictions.forEach((prediction) => {
-        const detectedClass = prediction.class.trim();
-
-        // Check if this face has been seen before
-        if (!isSameFace(prediction)) {
-          setDetectedObjects((prev) => new Set(prev).add(detectedClass));
-          setKnownFaces((prev) => [
-            ...prev,
-            { class: detectedClass, bbox: prediction.bbox },
-          ]);
-        }
-
-        // Use color map for consistent color per class
-        const color = colorMap[detectedClass] || "rgb(255, 159, 64)";
-
-        // Draw bounding box and label
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 4;
-
-        const x = prediction.bbox.x - prediction.bbox.width / 2;
-        const y = prediction.bbox.y - prediction.bbox.height / 2;
-        const width = prediction.bbox.width;
-        const height = prediction.bbox.height;
-
-        ctx.strokeRect(x, y, width, height);
-
-        // Draw label background
-        const text = `${detectedClass} ${Math.round(prediction.confidence * 100) / 100}`;
-        ctx.font = "15px monospace";
-        const textWidth = ctx.measureText(text).width;
-        ctx.fillStyle = color;
-        ctx.fillRect(x - 2, y - 30, textWidth + 4, 30);
-
-        // Draw label text
-        ctx.fillStyle = "white";
-        ctx.fillText(text, x, y - 10);
-      });
-
-      setTimeout(detectFrame, 100 / 3);
-    });
-  };
+    return () => {
+      if (videoRef.current) {
+        videoRef.current.removeEventListener('play', handleVideoPlay);
+      }
+    };
+  }, []); // No dependencies needed here
 
   return (
-    <div style={{ padding: "1rem", backgroundColor: "#1c1f2e", display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem" }}>
-      <div style={{ width: "640px", height: "480px", position: "relative", borderRadius: "8px", overflow: "hidden" }}>
-        <h1 className="font-bold text-white text-left" style={{ marginLeft: "8px" }}>1. Camera 1</h1>
+    <div className="p-4 bg-[#1c1f2e] flex flex-col items-left gap-4 relative">
+      <div className="w-[640px] h-[480px] relative rounded-lg overflow-hidden">
+        <h1 className="font-bold text-white text-left mb-4 ml-2">Camera 1</h1>
         <video
-          id="video"
           ref={videoRef}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          autoPlay
+          muted
+          className="w-full h-full object-cover ml-2"
         />
-        <canvas
-          id="canvas"
-          ref={canvasRef}
-          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
-        />
+        <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
       </div>
-      <div style={{ width: "160px", height: "160px", backgroundColor: "white", borderRadius: "8px", padding: "1rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <h1 style={{ fontWeight: "bold", fontSize: "18px", textAlign: "center" }}>Counter</h1>
-        <p style={{ fontSize: "24px", textAlign: "center" }}>{detectedObjects.size}</p>
+      {/* Counter Box */}
+      <div className="flex flex-col items-center justify-left w-24 h-24 ml-2 bg-white rounded-lg shadow-lg text-center">
+        <p className="font-bold m-0">Counter</p>
+        <p className="text-2xl m-0">{faceCount}</p>
       </div>
     </div>
   );
